@@ -2,7 +2,10 @@ package gosegment
 
 import (
 	"container/list"
+	"fmt"
+	"path"
 	"regexp"
+	"runtime"
 	"strings"
 	"unicode"
 
@@ -25,13 +28,27 @@ type Segment struct {
 	re             *regexp.Regexp
 }
 
-func NewSegment() *Segment {
-	return &Segment{}
+func NewSegment(dirs ...string) *Segment {
+	seg := &Segment{}
+
+	var dir string
+	if len(dirs) != 0 {
+		dir = dirs[0]
+	}
+	if dir == "" {
+		_, filePath, _, _ := runtime.Caller(0)
+		dir = path.Join(path.Dir(filePath), "data")
+	}
+	if err := seg.init(dir); err != nil {
+		fmt.Println(err.Error())
+	}
+
+	return seg
 }
 
-func (s *Segment) Init(dictPath string) (err error) {
+func (s *Segment) init(dictPath string) (err error) {
 	s.re = regexp.MustCompile(PATTERNS)
-	err = s.loadVerbTable(dictPath + "/Verbtable.txt")
+	err = s.loadVerbTable(path.Join(dictPath, "Verbtable.txt"))
 	if err == nil {
 		err = s.loadDictionary(dictPath)
 	}
@@ -55,7 +72,7 @@ func (s *Segment) loadVerbTable(file string) (err error) {
 
 func (s *Segment) loadDictionary(dictPath string) (err error) {
 	s.wordDictionary = dict.NewWordDictionary()
-	err = s.wordDictionary.Load(dictPath + "/Dict.txt")
+	err = s.wordDictionary.Load(path.Join(dictPath, "Dict.txt"))
 	if err == nil {
 		s.chsName = dict.NewChsName()
 		s.wordDictionary.ChineseName = s.chsName
@@ -63,7 +80,7 @@ func (s *Segment) loadDictionary(dictPath string) (err error) {
 	}
 	if err == nil {
 		s.stopWord = dict.NewStopWord()
-		err = s.stopWord.Load(dictPath + "/Stopword.txt")
+		err = s.stopWord.Load(path.Join(dictPath, "Stopword.txt"))
 	}
 	if err == nil {
 		s.synonym = dict.NewSynonym()

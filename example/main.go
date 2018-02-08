@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 
 	"github.com/WindomZ/gosegment"
 	"github.com/WindomZ/gosegment/dict"
@@ -11,14 +9,6 @@ import (
 
 func main() {
 	seg := gosegment.NewSegment()
-	dir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	err = seg.Init(filepath.Join(dir, "data"))
-	if err != nil {
-		fmt.Println(err.Error())
-	}
 	ret := seg.DoSegment(`盘古分词 简介: 盘古分词 是由eaglet 开发的一款基于字典的中英文分词组件
 主要功能: 中英文分词，未登录词识别,多元歧义自动识别,全角字符识别能力
 主要性能指标:
