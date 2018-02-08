@@ -1,14 +1,15 @@
 /**
  * func:  stop word match
  * status: ok
- * 
+ *
  */
 
 package dict
 
 import (
-	"segment/utils"
 	"strings"
+
+	"github.com/WindomZ/gosegment/utils"
 )
 
 type StopWord struct {
